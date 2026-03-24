@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Daily Flora — PV Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1.5rem;
+      background: linear-gradient(135deg, #1a1e2e 0%, #2d1b3d 50%, #1a2e1e 100%);
+      border-bottom: 1px solid #30363d;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: #f0c6e8;
+      margin-bottom: 0.5rem;
+    }
+    header h1 span { font-weight: 600; }
+    header p {
+      color: #8b949e;
+      font-size: 0.95rem;
+    }
+    .shots {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .shot-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .shot-card:hover { border-color: #58a6ff; }
+    .shot-card .info {
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid #21262d;
+    }
+    .shot-num {
+      background: linear-gradient(135deg, #8957e5, #d2a8ff);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .shot-title { font-size: 1.05rem; font-weight: 500; }
+    .shot-desc {
+      color: #8b949e;
+      font-size: 0.85rem;
+      margin-left: auto;
+    }
+    .shot-card video {
+      width: 100%;
+      display: block;
+      background: #000;
+    }
+    .status-bar {
+      max-width: 900px;
+      margin: 0 auto 1rem;
+      padding: 0 1rem;
+    }
+    .progress {
+      background: #21262d;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 6px;
+      background: #30363d;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8957e5, #f0c6e8);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+    footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #484f58;
+      font-size: 0.8rem;
+    }
+    footer a { color: #58a6ff; text-decoration: none; }
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .shot-card .info { flex-wrap: wrap; }
+      .shot-desc { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🌸 <span>The Daily Flora</span></h1>
+  <p>PV 分镜预览 — 少女魔女 Flora 的治愈日常</p>
+</header>
+
+<div class="status-bar" style="margin-top:2rem;">
+  <div class="progress">
+    <span>制作进度</span>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="progressText"></span>
+  </div>
+</div>
+
+<div class="shots" id="shotList"></div>
+
+<footer>
+  <p>Made with ✨ by 豆糕 & Yui</p>
+  <p style="margin-top:0.5rem;"><a href="https://github.com/nanbeilvdougao/the-daily-flora-pv">GitHub Repo</a></p>
+</footer>
+
+<script>
+const shots = [
+  { num: 1, title: '床头柜特写', desc: 'ACT 1 · 清晨', file: 'shots/01/1.mp4' },
+  { num: 2, title: '闹钟响了，按掉', desc: 'ACT 1 · 清晨', file: 'shots/02/2.mp4' },
+  { num: 3, title: '坐起来伸懒腰', desc: 'ACT 1 · 清晨', file: 'shots/03/3.mp4' },
+  { num: 4, title: '下床走出房间', desc: 'ACT 1 · 清晨', file: 'shots/04/4.mp4' },
+  { num: 5, title: '进入卫生间洗漱', desc: 'ACT 1 · 清晨', file: 'shots/05/5.mp4' },
+  // 后续镜头在这里添加
+  // { num: 6, title: '穿衣快切', desc: 'ACT 1 · 清晨', file: 'shots/06/6.mp4' },
+];
+
+const totalShots = 22;
+const doneShots = shots.length;
+
+document.getElementById('progressFill').style.width = (doneShots / totalShots * 100) + '%';
+document.getElementById('progressText').textContent = `${doneShots} / ${totalShots}`;
+
+const list = document.getElementById('shotList');
+shots.forEach(s => {
+  const card = document.createElement('div');
+  card.className = 'shot-card';
+  card.innerHTML = `
+    <div class="info">
+      <span class="shot-num">Shot ${String(s.num).padStart(2,'0')}</span>
+      <span class="shot-title">${s.title}</span>
+      <span class="shot-desc">${s.desc}</span>
+    </div>
+    <video controls preload="metadata" playsinline>
+      <source src="${s.file}" type="video/mp4">
+    </video>
+  `;
+  list.appendChild(card);
+});
+</script>
+
+</body>
+</html>
